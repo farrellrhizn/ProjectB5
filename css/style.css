@@ -162,3 +162,18 @@ header ul li a {
 	margin-bottom: 15px;
 	box-sizing: border-box;
 }
+.laporan{
+	width: 95%;
+	margin: 20px;
+	font-size: large;
+	margin-bottom: 25px;
+	padding-bottom: 25px;
+	padding: 15px 32px;
+	background-color: #006dc7;
+	color: #fff;
+	border: 1px;
+	cursor: pointer;
+	text-decoration: none;
+  	display: inline-block;
+	text-align: center;
+}
