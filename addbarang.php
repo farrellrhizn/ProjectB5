@@ -41,7 +41,7 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php">Logout</a></li>
+				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -56,7 +56,6 @@
 						$cek = mysqli_query($conn,"SELECT MAX(kdBarang) FROM Barang");
 						while ($tampil = mysqli_fetch_array($cek)){
 
-						$id = addslashes($_POST['kdBarang']);
 						$NamaBarang = addslashes($_POST['NamaBarang']);
 						$jenis_barang = addslashes($_POST['jenis_barang']);
 						$desk = addslashes($_POST['deskripsi']);
@@ -96,7 +95,7 @@
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['jenis_barang'])){ echo $_POST['jenis_barang']; }?>" placeholder="Jenis Barang..." name="jenis_barang" maxlength="255" required></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" placeholder="Deskripsi Barang..." name="jenis_barang" maxlength="255" required></textarea></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" placeholder="Deskripsi Barang..." name="deskripsi" maxlength="255" required></textarea></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['HargaBeli'])){ echo $_POST['HargaBeli']; }else{ echo 0; } ?>" name="HargaBeli" maxlength="13"></td>
