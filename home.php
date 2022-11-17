@@ -42,7 +42,7 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="listsupplier.php">Transaksi</a></li>
 				<li><a href="listsupplier.php">Laporan</a></li>
-				<li><a href="logout.php">Logout</a></li>
+				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
 			</ul>
 			<h4><br><br><br>Selamat Datang &nbsp;<?php echo $_SESSION['user_global']->NamaAdmin ?> di Sembakouu<br><br></h4>
 		</div>
