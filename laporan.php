@@ -49,7 +49,7 @@
 	<!-- Content -->
 	<div class="section">
 		<div class="container">
-			<h2>Laporan</h2>
+			<h1>Laporan</h1>
 			<div class="box">
 				<form action="laporanperhari.php" method="POST">
 					<input type="submit" name="hari" value="Laporan Perhari" class="laporan">
@@ -57,6 +57,9 @@
 				<form action="laporanperbulan.php" method="POST">
 					<input type="submit" name="bulan" value="Laporan Perbulan" class="laporan">
 				</form>	
+				<form action="history.php" method="POST">
+					<input type="submit" name="history" value="Riwayat Admin" class="laporan">
+				</form>
 			</div>
 		</div>
 		<!-- Footer -->
