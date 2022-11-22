@@ -41,10 +41,10 @@
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="listsupplier.php">Transaksi</a></li>
-				<li><a href="listsupplier.php">Laporan</a></li>
+				<li><a href="laporan.php">Laporan</a></li>
 				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
 			</ul>
-			<h4><br><br><br>Selamat Datang &nbsp;<?php echo $_SESSION['user_global']->NamaAdmin ?> di Sembakouu<br><br></h4>
+			<h4><br><br><br>Selamat Datang <?php echo $_SESSION['user_global']->NamaAdmin ?><br><br></h4>
 		</div>
 	</header>
 	
@@ -64,20 +64,38 @@
 				<form action="" method="POST">
 				<h3> Pendapatan Hari Ini</h3>
 					<div class="input-control-pendapatan">
-						<input type="text" name="pendapatan" id="cari" disabled class="input-control-pendapatan">
+						<input type="text" name="pendapatan" disabled id="cari" class="input-control-pendapatan" value="<?php
+						$cek1 = "SELECT penjualan.Waktu,SUM(detail_penjualan.TotalHarga) AS total
+						FROM penjualan 
+						JOIN detail_penjualan 
+						ON penjualan.kdPenjualan = detail_penjualan.kdPenjualan
+						WHERE penjualan.Waktu=DATE(NOW())
+						GROUP BY penjualan.Waktu";
+						$result1 = mysqli_query($conn, $cek1);
+						if ($result1->num_rows > 0) {
+							$tampil1 = mysqli_fetch_array($result1);
+							$total = $tampil1['total'];
+							echo 'Rp. ' . number_format($total,2,',','.');
+						}else{
+							$total = 0;}  ?>">
 					</div>
+					<?php
+					echo '&nbsp;&nbsp;&nbsp;';
+					echo date('d F Y');
+					?>
 				</form>
 			</div>
 			</div>
 			<table align="center" class="box-list">
+			<div class="block-title">
 			<tr>
 				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Kode Barang</b></td>
 				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Nama Barang</b></td>
 				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Jenis Barang</b></td>
-				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Harga Beli</b></td>
+				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Gambar</b></td>
 				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Harga Jual</b></td>
-				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Stok</b></td>
-				<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Satuan</b></td>
+				<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center"><b>Stok</b></td>
+				<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center"><b>Satuan</b></td>
 			</tr>
 
 				<?php
@@ -88,7 +106,7 @@
 							$id = $tampil['kdBarang'];
 							$nama = $tampil['NamaBarang'];
 							$jenis_barang = $tampil['jenis_barang'];
-							$HargaBeli = $tampil['HargaBeli'];
+							$gambar = $tampil['gambar'];
 							$HargaJual = $tampil['HargaJual'];
 							$Stok = $tampil['Stok'];
 							$Satuan = $tampil['Satuan'];
@@ -100,40 +118,42 @@
 							$id = $tampil['kdBarang'];
 							$nama = $tampil['NamaBarang'];
 							$jenis_barang = $tampil['jenis_barang'];
-							$HargaBeli = $tampil['HargaBeli'];
+							$gambar = $tampil['gambar'];
 							$HargaJual = $tampil['HargaJual'];
 							$Stok = $tampil['Stok'];
 							$Satuan = $tampil['Satuan'];
-						echo "
+						?>
 						<tr>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$id</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$nama</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$jenis_barang</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$HargaBeli</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$HargaJual</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$Stok</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$Satuan</td>
+							<td align='center'><?php echo $id ?></td>
+							<td align='center'><?php echo $nama ?></td>
+							<td align='center'><?php echo $jenis_barang ?></td>
+							<td align='center'><img src="img/produk/<?php echo $gambar ?>" width="50px"></td>
+							<td align='center'><?php echo 'Rp. ' . number_format($HargaJual,2,',','.'); ?></td>
+							<td align='center'><?php echo $Stok ?></td>
+							<td align='center'><?php echo $Satuan ?></td>
 						</tr>
-						";
+						<?php
 						}
 					}
-					if(isset($_POST['pendapatan'])){
-					$cek3 = mysqli_query($conn,"SELECT SUM(TotalHarga) FROM penjualan");
-					while ($tampil = mysqli_fetch_array($cek3)){
-						$id = $tampil['kdPenjualan'];
-						$total = $tampil['TotalHarga'];
-						$nama = $tampil['NamaAdmin'];
-						$waktu = $tampil['Waktu'];
-
-						echo "<a>$total</a>";
-						}
-					}
-				
+						$cek1 = "SELECT penjualan.Waktu,SUM(detail_penjualan.TotalHarga) AS total
+						FROM penjualan 
+						JOIN detail_penjualan 
+						ON penjualan.kdPenjualan = detail_penjualan.kdPenjualan
+						WHERE penjualan.Waktu=DATE(NOW())
+						GROUP BY penjualan.Waktu";
+						$result1 = mysqli_query($conn, $cek1);
+						if ($result1->num_rows > 0) {
+						$tampil1 = mysqli_fetch_array($result1);
+						$total = $tampil1['total'];
+						}else $total = 0;
+					
+					
 				?>
-				
+				</div>
 			</div>
 		</div>
 	</div>
+				
 	
 </body>
 

@@ -40,8 +40,8 @@
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="listsupplier.php">Transaksi</a></li>
-				<li><a href="listsupplier.php">Laporan</a></li>
-				<li><a href="logout.php">Logout</a></li>
+				<li><a href="laporan.php">Laporan</a></li>
+				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -52,20 +52,17 @@
 			<h2>Data Supplier</h2>
 				<div class="box-list">
 				<div class="block-title">
-					<h3><i class="fa fa-search"></i> Tambah Supplier</h3>
-				</div>
 				<form action="addsupplier.php" method="POST">
-					<div class="input-control-add">
-						<input type="text" class="input-control-add" placeholder="Nama Supplier...">
-							<button type="submit" value="Tambah" class="input-group-btn"><a>Tambah</a></button>
-					</div>
-				</form>
-				<form action="" method="POST">
 				<h3><i class="fa fa-search"></i> Cari Supplier</h3>
 					<div class="input-control-add">
 						<input type="text" name="cari" id="cari" class="input-control-add" placeholder="Cari Supplier...">
 							<button type="submit" name="submit" value="cari" class="input-group-btn"><a>Cari </a></button>
 					</div>
+					<h3><i class="fa fa-search"></i> Tambah Supplier</h3>
+					<div class="input-control-add">
+						<button type="submit" value="Tambah" class="input-group-btn"><a>Tambah</a></button>
+					</div>
+				</div>
 				</form>
 			</div>
 			<table align="center">
@@ -82,8 +79,8 @@
 			
 				<?php
 				if(!(isset($_POST['submit']))){
-					$cek = mysqli_query($conn,"SELECT * FROM supplier ");
 					
+					$cek = mysqli_query($conn,"SELECT * FROM supplier ");
 					while ($tampil = mysqli_fetch_array($cek)){
 					
 					$id = $tampil['kdSupplier'];

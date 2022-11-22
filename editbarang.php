@@ -13,13 +13,11 @@
 	}
 
 	$_SESSION['start_session']=time();
-
-	include('config.php');
 	if($_SESSION['status_login'] != true){
 		echo '<script>window.location="login.php"</script>';
 	}
-	$query = mysqli_query($conn, "SELECT * FROM barang WHERE kdbarang = '".$_GET['kdbarang']."' ");
-	$d = mysqli_fetch_object($query);
+	include('config.php');
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -43,7 +41,7 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php">Logout</a></li>
+				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -54,18 +52,21 @@
 			<h3>Edit Barang</h3>
 			<div class="box">
 				<?php
-					if(isset($_POST['simpan'])){
-						$query = mysqli_query($conn, "SELECT * FROM barang WHERE kdBarang = '".$_GET['kdBarang']."' ");
-						$d = mysqli_fetch_object($query);
+			
+					if(isset($_GET['simpan'])){
+						$cek = mysqli_query($conn,"SELECT * FROM barang 
+						WHERE kdBarang = '".$_GET['kdBarang']."' ");
 						while ($tampil = mysqli_fetch_array($cek)){
-
-						$NamaBarang = addslashes($_POST['NamaBarang']);
-						$jenis_barang = addslashes($_POST['jenis_barang']);
-						$desk = addslashes($_POST['deskripsi']);
-						$HargaBeli = addslashes($_POST['HargaBeli']);
-						$HargaJual = addslashes($_POST['HargaJual']);
-						$Stok = addslashes($_POST['Stok']);
-						$Satuan = addslashes($_POST['Satuan']);
+						
+						$id = addslashes($tampil['kdBarang']);
+						$NamaBarang = addslashes($tampil['NamaBarang']);
+						$jenis_barang = addslashes($tampil['jenis_barang']);
+						$desk = addslashes($tampil['deskripsi']);
+						$gambar = addslashes($tampil['gambar']);
+						$HargaBeli = addslashes($tampil['HargaBeli']);
+						$HargaJual = addslashes($tampil['HargaJual']);
+						$Stok = addslashes($tampil['Stok']);
+						$Satuan = addslashes($tampil['Satuan']);
 
 						$MaxID = $tampil[0];
 						$id = (int) substr($MaxID,1,4);
@@ -77,43 +78,92 @@
 						//}else if($NewID > 0){
 							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
 						//}else{
-							$insert = mysqli_query($conn, "UPDATE penjual SET '".$NewID."', '".$NamaBarang."', '".$jenis_barang."', '".$desk."', '".$HargaBeli."', '".$HargaJual."', '".$Stok."', '".$Satuan."' WHERE kdBarang = '".$b->kdBarang."' ");
+							$insert = mysqli_query($conn, "UPDATE barang SET `NamaBarang` = '".$NamaBarang."', `jenis_barang` = '".$jenis_barang."', `deskripsi` = '".$desk."',  `gambar` = '".$gambar."', `HargaBeli` = '".$HargaBeli."', `HargaJual` = '".$HargaJual."', `Stok` = '".$Stok."', `Satuan` = '".$Satuan."' WHERE kdBarang = '".$id."' ");
 							$insert = mysqli_query($conn,"INSERT INTO admin_logs VALUES ('".$_SESSION['user_global']->NamaAdmin."', 'Mengedit Barang: ".$NamaBarang."')");
 							
 							if($insert){
-								echo "<b style='color: green'>Barang Berhasil Ditambahkan. ID Barang: $NewID</b>";
+								echo "<b style='color: green'>Barang Berhasil Diubah. ID Barang: $NewID</b>";
 							}else{
 								echo "<b style='color: red'>Semua kolom telah diisi dengan benar, tetapi terjadi kesalahan saat mengirim ke database, silakan coba lagi nanti!</b>";
 							}
 						}
 						echo "<br /><br />";
+					} else{
+						$cek = mysqli_query($conn,"SELECT * FROM barang ");
+						while ($tampil = mysqli_fetch_array($cek)){
+						
+						$id = $tampil['kdBarang'];
+						$NamaBarang = ($tampil['NamaBarang']);
+						$jenis_barang = ($tampil['jenis_barang']);
+						$desk = ($tampil['deskripsi']);
+						$gambar = ($tampil['gambar']);
+						$HargaBeli = ($tampil['HargaBeli']);
+						$HargaJual = ($tampil['HargaJual']);
+						$Stok = ($tampil['Stok']);
+						$Satuan = ($tampil['Satuan']);
+
+						switch($jenis_barang){
+							case "Sembako":
+							break;
+							case "Alat Tulis":
+							break;
+							case "Minuman":
+							break;
+							case "Makanan":
+							break;
+							case "Makanan Ringan":
+							break;
+							case "Perlengkapan Mencuci":
+							break;
+							case "Bumbu Dapur":
+							break;
+							case "Kebutuhan Rumah Tangga":
+							break;
+						}
+						}
 					}
-				//}
 				?>
 				<form action="" method="POST">
-					
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaBarang" value="<?php echo $_GET['kdBarang'] = $d->NamaBarang ?>" maxlength="255"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Kode Barang : </td><td><input type="text" disabled class="datepicker-trigger input-control hasDatepicker" name="kdBarang" value="<?php echo $id ?>" maxlength="255"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $d->jenis_barang ?>" placeholder="Jenis Barang..." name="jenis_barang" maxlength="255"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaBarang" value="<?php echo $NamaBarang ?>" maxlength="255"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['jenis_barang'])){ echo $_POST['jenis_barang']; }?>" placeholder="Jenis Barang..." name="jenis_barang" maxlength="255"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td>
+						<td>
+							<select name="jenis_barang"  class="input-control" onchange="exibeMsg(this.value);">
+								<option value="Sembako">Sembako</option>
+								<option value="Alat Tulis">Alat Tulis</option>
+								<option value="Minuman">Minuman</option>
+								<option value="Makanan">Makanan</option>
+								<option value="Makanan Ringan">Makanan Ringan</option>
+								<option value="Perlengkapan Mencuci">Perlengkapan Mencuci</option>
+								<option value="Bumbu Dapur">Bumbu Dapur</option>
+								<option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option>
+							</select>
+						</td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['HargaBeli'])){ echo $_POST['HargaBeli']; }else{ echo 0; } ?>" name="HargaBeli" maxlength="13"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" placeholder="Deskripsi..." name="deskripsi"><?php echo $desk ?></textarea></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Jual <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['HargaJual'])){ echo $_POST['HargaJual']; }else{ echo 0; } ?>" name="HargaJual" maxlength="13"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $gambar ?>" placeholder="Gambar..." name="gambar" maxlength="255"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Stok <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['Stok'])){ echo $_POST['Stok']; }else{ echo 0; } ?>" name="Stok" maxlength="13"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $HargaBeli ?>" name="HargaBeli" maxlength="13"></td>
+					</tr>
+					<tr>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Jual <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $HargaJual ?>" name="HargaJual" maxlength="13"></td>
+					</tr>
+					<tr>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Stok <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $Stok ?>" name="Stok" maxlength="13"></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Satuan : </td>
 						<td>
-							<select name="Satuan" class="datepicker-trigger input-control hasDatepicker" onchange="exibeMsg(this.value);">
+							<select name="Satuan" value="<?php echo $Satuan ?>" class="datepicker-trigger input-control hasDatepicker" onchange="exibeMsg(this.value);">
 								<option value="Kilogram">Kilogram</option>
 								<option value="Liter">Liter</option>
 								<option value="Pcs">Pcs</option>

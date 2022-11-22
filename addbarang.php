@@ -59,10 +59,25 @@
 						$NamaBarang = addslashes($_POST['NamaBarang']);
 						$jenis_barang = addslashes($_POST['jenis_barang']);
 						$desk = addslashes($_POST['deskripsi']);
+
 						$HargaBeli = addslashes($_POST['HargaBeli']);
 						$HargaJual = addslashes($_POST['HargaJual']);
 						$Stok = addslashes($_POST['Stok']);
 						$Satuan = addslashes($_POST['Satuan']);
+
+						$filename = $_FILES['gambar']['name'];
+						$tmp_name = $_FILES['gambar']['tmp_name'];
+
+						$type1 = explode('.', $filename);
+						$type2 = $type1[1];
+
+						$tipe_diizinkan = array('jpg', 'jpeg', 'png');
+
+						if(!in_array($type2, $tipe_diizinkan)){
+							echo 'Format tidak sesuai!';
+						}else{
+							move_uploaded_file($tmp_name, './img/produk/'.$filename);
+						}
 
 						$MaxID = $tampil[0];
 						$id = (int) substr($MaxID,1,4);
@@ -74,7 +89,7 @@
 						//}else if($NewID > 0){
 							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
 						//}else{
-							$insert = mysqli_query($conn, "INSERT INTO barang VALUES ('".$NewID."', '".$NamaBarang."', '".$jenis_barang."', '".$desk."', '".$HargaBeli."', '".$HargaJual."', '".$Stok."', '".$Satuan."')");
+							$insert = mysqli_query($conn, "INSERT INTO barang VALUES ('".$NewID."', '".$NamaBarang."', '".$jenis_barang."', '".$desk."', '".$filename."', '".$HargaBeli."', '".$HargaJual."', '".$Stok."', '".$Satuan."')");
 							$insert = mysqli_query($conn, "INSERT INTO admin_logs VALUES ('".$_SESSION['user_global']->NamaAdmin."', 'Menambahkan Barang: ".$NamaBarang."')");
 							
 							if($insert){
@@ -87,15 +102,30 @@
 					}
 				//}
 				?>
-				<form action="" method="POST">
+				<form action="" method="POST" enctype="multipart/form-data">
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaBarang" value="<?php if(isset($_POST['NamaBarang'])){ echo $_POST['NamaBarang']; }?>" placeholder="Nama Barang..." maxlength="255" required></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['jenis_barang'])){ echo $_POST['jenis_barang']; }?>" placeholder="Jenis Barang..." name="jenis_barang" maxlength="255" required></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td>
+						<td>
+							<select name="jenis_barang" class="datepicker-trigger input-control hasDatepicker" onchange="exibeMsg(this.value);">
+								<option value="Sembako">Sembako</option>
+								<option value="Alat Tulis">Alat Tulis</option>
+								<option value="Minuman">Minuman</option>
+								<option value="Makanan">Makanan</option>
+								<option value="Makanan Ringan">Makanan Ringan</option>
+								<option value="Perlengkapan Mencuci">Perlengkapan Mencuci</option>
+								<option value="Bumbu Dapur">Bumbu Dapur</option>
+								<option value="Kebutuhan Rumah Tangga">Kebutuhan Rumah Tangga</option>
+							</select>
+						</td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" placeholder="Deskripsi Barang..." name="deskripsi" maxlength="255" required></textarea></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" placeholder="Deskripsi Barang..." name="deskripsi" required></textarea></td>
+					</tr>
+					<tr>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="file" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" name="gambar" maxlength="255" required></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['HargaBeli'])){ echo $_POST['HargaBeli']; }else{ echo 0; } ?>" name="HargaBeli" maxlength="13"></td>
