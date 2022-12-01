@@ -53,46 +53,43 @@
 			<div class="box">
 				<?php
 			
-					if(isset($_GET['simpan'])){
-						$cek = mysqli_query($conn,"SELECT * FROM barang 
-						WHERE kdBarang = '".$_GET['kdBarang']."' ");
-						while ($tampil = mysqli_fetch_array($cek)){
+					if(isset($_POST['simpan']) ){
 						
-						$id = addslashes($tampil['kdBarang']);
-						$NamaBarang = addslashes($tampil['NamaBarang']);
-						$jenis_barang = addslashes($tampil['jenis_barang']);
-						$desk = addslashes($tampil['deskripsi']);
-						$gambar = addslashes($tampil['gambar']);
-						$HargaBeli = addslashes($tampil['HargaBeli']);
-						$HargaJual = addslashes($tampil['HargaJual']);
-						$Stok = addslashes($tampil['Stok']);
-						$Satuan = addslashes($tampil['Satuan']);
+						$NamaBarang = addslashes($_POST['NamaBarang']);
+						$jenis_barang = addslashes($_POST['jenis_barang']);
+						$desk = addslashes($_POST['deskripsi']);
+						$gambar = addslashes($_POST['gambar']);
+						$HargaBeli = addslashes($_POST['HargaBeli']);
+						$HargaJual = addslashes($_POST['HargaJual']);
+						$Stok = addslashes($_POST['Stok']);
+						$Satuan = addslashes($_POST['Satuan']);
+						$kdSupplier = addslashes($_POST['kdSupplier']);
 
-						$MaxID = $tampil[0];
-						$id = (int) substr($MaxID,1,4);
-						$MaxID++;
-						$NewID = "".sprintf("%04s",$MaxID++);
-
+						
 						//if(empty($NewID) || ($NewID <= 0)){
 							//echo "<b style='color: red'>Isi semua kolom dengan benar!</b>";
 						//}else if($NewID > 0){
 							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
 						//}else{
-							$insert = mysqli_query($conn, "UPDATE barang SET `NamaBarang` = '".$NamaBarang."', `jenis_barang` = '".$jenis_barang."', `deskripsi` = '".$desk."',  `gambar` = '".$gambar."', `HargaBeli` = '".$HargaBeli."', `HargaJual` = '".$HargaJual."', `Stok` = '".$Stok."', `Satuan` = '".$Satuan."' WHERE kdBarang = '".$id."' ");
-							$insert = mysqli_query($conn,"INSERT INTO admin_logs VALUES ('".$_SESSION['user_global']->NamaAdmin."', 'Mengedit Barang: ".$NamaBarang."')");
+							if(mysqli_query($conn, "UPDATE barang SET `NamaBarang` = '".$NamaBarang."', `jenis_barang` = '".$jenis_barang."', `deskripsi` = '".$desk."',  `gambar` = '".$gambar."', `HargaBeli` = '".$HargaBeli."', `HargaJual` = '".$HargaJual."', `Stok` = '".$Stok."', `Satuan` = '".$Satuan."', `kdSupplier` = '".$kdSupplier."' WHERE kdBarang = '".$_GET['kdBarang']."' ")){
+							mysqli_query($conn,"INSERT INTO admin_logs VALUES ('', '".$_SESSION['user_global']->NamaAdmin."', 'Mengedit Barang: ".$NamaBarang."')");
 							
-							if($insert){
-								echo "<b style='color: green'>Barang Berhasil Diubah. ID Barang: $NewID</b>";
+							echo "<div class='alert alert-success fade in block-inner'>
+							<button type='button' class='close' data-dismiss='alert'></button>
+							Edit Barang Berhasil! - Dialihkan dalam 5 detik...<script type='text/javascript' language='JavaScript'>
+							setTimeout(function () { location.href = 'listbarang.php';
+							}, 5000);
+							</script>
+							</div>";
 							}else{
-								echo "<b style='color: red'>Semua kolom telah diisi dengan benar, tetapi terjadi kesalahan saat mengirim ke database, silakan coba lagi nanti!</b>";
+							echo "<b style='color: red'>Semua field sudah diisi dengan benar, namun terjadi error saat pengiriman ke database, silahkan coba lagi nanti</b><br /><br />";
 							}
-						}
-						echo "<br /><br />";
 					} else{
-						$cek = mysqli_query($conn,"SELECT * FROM barang ");
-						while ($tampil = mysqli_fetch_array($cek)){
+						$kdBarang = $_GET['kdBarang'];
+						$cek2 = mysqli_query($conn,"SELECT * FROM barang WHERE kdBarang = '".$kdBarang."' ");
+						while ($tampil = mysqli_fetch_array($cek2)){
 						
-						$id = $tampil['kdBarang'];
+						$kdBarang = $tampil['kdBarang'];
 						$NamaBarang = ($tampil['NamaBarang']);
 						$jenis_barang = ($tampil['jenis_barang']);
 						$desk = ($tampil['deskripsi']);
@@ -101,32 +98,11 @@
 						$HargaJual = ($tampil['HargaJual']);
 						$Stok = ($tampil['Stok']);
 						$Satuan = ($tampil['Satuan']);
-
-						switch($jenis_barang){
-							case "Sembako":
-							break;
-							case "Alat Tulis":
-							break;
-							case "Minuman":
-							break;
-							case "Makanan":
-							break;
-							case "Makanan Ringan":
-							break;
-							case "Perlengkapan Mencuci":
-							break;
-							case "Bumbu Dapur":
-							break;
-							case "Kebutuhan Rumah Tangga":
-							break;
-						}
+						$kdSupplier = ($tampil['kdSupplier']);
 						}
 					}
 				?>
 				<form action="" method="POST">
-					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Kode Barang : </td><td><input type="text" disabled class="datepicker-trigger input-control hasDatepicker" name="kdBarang" value="<?php echo $id ?>" maxlength="255"></td>
-					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaBarang" value="<?php echo $NamaBarang ?>" maxlength="255"></td>
 					</tr>
@@ -134,6 +110,7 @@
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td>
 						<td>
 							<select name="jenis_barang"  class="input-control" onchange="exibeMsg(this.value);">
+								<option value="<?php echo $jenis_barang ?>"><?php echo $jenis_barang ?></option>
 								<option value="Sembako">Sembako</option>
 								<option value="Alat Tulis">Alat Tulis</option>
 								<option value="Minuman">Minuman</option>
@@ -149,7 +126,7 @@
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" placeholder="Deskripsi..." name="deskripsi"><?php echo $desk ?></textarea></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $gambar ?>" placeholder="Gambar..." name="gambar" maxlength="255"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $gambar ?>" name="gambar" maxlength="255" ></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $HargaBeli ?>" name="HargaBeli" maxlength="13"></td>
@@ -164,10 +141,35 @@
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Satuan : </td>
 						<td>
 							<select name="Satuan" value="<?php echo $Satuan ?>" class="datepicker-trigger input-control hasDatepicker" onchange="exibeMsg(this.value);">
+								<option value="<?php echo $Satuan ?>"><?php echo $Satuan ?></option>
 								<option value="Kilogram">Kilogram</option>
 								<option value="Liter">Liter</option>
 								<option value="Pcs">Pcs</option>
 								<option value="Ons">Ons</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Supplier : </td>
+						<td>
+							<select name="kdSupplier" class="datepicker-trigger input-control hasDatepicker" required>
+								<?php
+									$sup = mysqli_query($conn,"SELECT supplier.kdSupplier, supplier.NamaSupplier 
+									FROM supplier 
+									JOIN barang
+									ON supplier.kdSupplier = barang.kdSupplier
+									WHERE barang.kdBarang = '".$_GET['kdBarang']."'
+									ORDER BY kdSupplier DESC");
+									while($s = mysqli_fetch_array($sup)){
+									?>
+									<option value="<?php echo $s['kdSupplier'] ?>"><?php echo $s['NamaSupplier'] ?></option>
+								<?php } ?>
+								<?php
+									$sup = mysqli_query($conn,"SELECT * FROM supplier ORDER BY kdSupplier DESC");
+									while($s = mysqli_fetch_array($sup)){
+									?>
+									<option value="<?php echo $s['kdSupplier'] ?>"><?php echo $s['NamaSupplier'] ?></option>
+								<?php } ?>
 							</select>
 						</td>
 					</tr>

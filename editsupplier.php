@@ -13,11 +13,11 @@
 	}
 
 	$_SESSION['start_session']=time();
-
-	include('config.php');
 	if($_SESSION['status_login'] != true){
 		echo '<script>window.location="login.php"</script>';
 	}
+	include('config.php');
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -49,52 +49,58 @@
 	<!-- Content -->
 	<div class="section">
 		<div class="container">
-			<h3>Tambah Supplier</h3>
+			<h3>Edit Supplier</h3>
 			<div class="box">
 				<?php
-					if(isset($_POST['tambah'])){
-						$cek = mysqli_query($conn,"SELECT MAX(kdSupplier) FROM supplier");
-						while ($tampil = mysqli_fetch_array($cek)){
-
+			
+					if(isset($_POST['simpan']) ){
+						
 						$NamaSupplier = addslashes($_POST['NamaSupplier']);
 						$Alamat = addslashes($_POST['Alamat']);
 						$NoHP = addslashes($_POST['NoHP']);
-
-						$MaxID = $tampil[0];
-						$id = (int) substr($MaxID,1,4);
-						$MaxID++;
-						$NewID = "".sprintf("%04s",$MaxID++);
 
 						//if(empty($NewID) || ($NewID <= 0)){
 							//echo "<b style='color: red'>Isi semua kolom dengan benar!</b>";
 						//}else if($NewID > 0){
 							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
 						//}else{
-							$insert = mysqli_query($conn, "INSERT INTO supplier VALUES ('".$NewID."', '".$NamaSupplier."', '".$Alamat."', '".$NoHP."')");
-							$insert = mysqli_query($conn, "INSERT INTO admin_logs VALUES ('', '".$_SESSION['user_global']->NamaAdmin."', 'Menambahkan Supplier: ".$NamaSupplier."')");
+							if(mysqli_query($conn, "UPDATE supplier SET `NamaSupplier` = '".$NamaSupplier."', `Alamat` = '".$Alamat."', `NoHP` = '".$NoHP."' WHERE kdSupplier = '".$_GET['kdSupplier']."' ")){
+							mysqli_query($conn,"INSERT INTO admin_logs VALUES ('', '".$_SESSION['user_global']->NamaAdmin."', 'Mengedit Supplier: ".$NamaSupplier."')");
 							
-							if($insert){
-								echo "<b style='color: green'>Supplier Berhasil Ditambahkan. ID Supplier: $NewID</b>";
+							echo "<div class='alert alert-success fade in block-inner'>
+							<button type='button' class='close' data-dismiss='alert'></button>
+							Edit Supplier Berhasil! - Dialihkan dalam 5 detik...<script type='text/javascript' language='JavaScript'>
+							setTimeout(function () { location.href = 'listsupplier.php';
+							}, 5000);
+							</script>
+							</div>";
 							}else{
-								echo "<b style='color: red'>Semua kolom telah diisi dengan benar, tetapi terjadi kesalahan saat mengirim ke database, silakan coba lagi nanti!</b>";
+							echo "<b style='color: red'>Semua field sudah diisi dengan benar, namun terjadi error saat pengiriman ke database, silahkan coba lagi nanti</b><br /><br />";
 							}
+					} else{
+						$kdSupplier = $_GET['kdSupplier'];
+						$cek2 = mysqli_query($conn,"SELECT * FROM supplier WHERE kdSupplier = '".$kdSupplier."' ");
+						while ($tampil = mysqli_fetch_array($cek2)){
+						
+						$kdSupplier = $tampil['kdSupplier'];
+						$NamaSupplier = ($tampil['NamaSupplier']);
+						$Alamat = ($tampil['Alamat']);
+						$NoHP = ($tampil['NoHP']);
 						}
-						echo "<br /><br />";
 					}
-				//}
 				?>
 				<form action="" method="POST">
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Supplier : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaSupplier" value="<?php if(isset($_POST['NamaSupplier'])){ echo $_POST['NamaSupplier']; }?>" placeholder="Nama Supplier..." maxlength="255" required></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Supplier : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaSupplier" value="<?php echo $NamaSupplier ?>" maxlength="255"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Alamat : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['Alamat'])){ echo $_POST['Alamat']; }?>" placeholder="Alamat..." name="Alamat" required></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Alamat : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="Alamat" value="<?php echo $Alamat ?>" maxlength="255"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">No HP : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['NoHP'])){ echo $_POST['NoHP']; }?>" placeholder="No HP..." name="NoHP" maxlength="12" required></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">No HP : <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $NoHP ?>" name="NoHP" maxlength="13"></td>
 					</tr>
 					
-					<input type="submit" name="tambah" value="Tambah" class="btn">
+					<input type="submit" name="simpan" value="Simpan" class="btn">
 				</form>
 			</div>
 		</div>

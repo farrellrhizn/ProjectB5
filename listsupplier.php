@@ -52,58 +52,64 @@
 			<h2>Data Supplier</h2>
 				<div class="box-list">
 				<div class="block-title">
-				<form action="addsupplier.php" method="POST">
-				<h3><i class="fa fa-search"></i> Cari Supplier</h3>
+				<form action="" method="POST">
+				<h3>Cari Supplier</h3>
 					<div class="input-control-add">
-						<input type="text" name="cari" id="cari" class="input-control-add" placeholder="Cari Supplier...">
-							<button type="submit" name="submit" value="cari" class="input-group-btn"><a>Cari </a></button>
+						<input type="text" name="cari" autocomplete="off" id="cari" class="input-control-add" placeholder="Cari Supplier...">
+						<button type="submit" name="submit" value="cari" class="input-group-btn"><a>Cari </a></button>
 					</div>
-					<h3><i class="fa fa-search"></i> Tambah Supplier</h3>
+				</form>
+				<form action="addsupplier.php" method="GET">
+				<h3> Tambah Supplier</h3>
 					<div class="input-control-add">
 						<button type="submit" value="Tambah" class="input-group-btn"><a>Tambah</a></button>
 					</div>
+				</form>
 				</div>
 				</form>
 			</div>
-			<table align="center">
+			<table align="center" class="box-list">
 				<tr>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Kode Supplier</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Nama Supplier</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Alamat</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>No HP</b></td>
-					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Kode Barang</b></td>
-					<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center" href="editsupplier.php"><b>Edit</b></td>
-					<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center" href="#" onClick="return confirm('apakah kamu yakin?');"><b>Hapus</b></td>
+					<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center"><b>Gambar</b></td>
+					<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center"><b>Action</b></td>
 				</tr>
 			
 			
 				<?php
 				if(!(isset($_POST['submit']))){
 					
-					$cek = mysqli_query($conn,"SELECT * FROM supplier ");
+					$cek = mysqli_query($conn,"SELECT supplier.kdSupplier, supplier.NamaSupplier,
+					supplier.Alamat, supplier.NoHP, barang.gambar 
+					FROM supplier
+					RIGHT JOIN barang
+					ON supplier.kdSupplier = barang.kdSupplier
+					GROUP BY kdSupplier ASC ");
 					while ($tampil = mysqli_fetch_array($cek)){
 					
 					$id = $tampil['kdSupplier'];
 					$nama = $tampil['NamaSupplier'];
 					$alamat = $tampil['Alamat'];
 					$nohp = $tampil['NoHP'];
-					$barang = $tampil['kdBarang'];
-					echo "
+					$gambar = $tampil['gambar'];
+					?>
 						<tr>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$id</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$nama</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$alamat</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$nohp</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$barang</td>
-							
+							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $id ?></td>
+							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nama ?></td>
+							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $alamat ?></td>
+							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nohp ?></td>
+							<td align='center'><img src="<?php echo $gambar ?>" width="50px"></td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
-								<a href='editbarang.php?edit=$id'><img src='img/edit.jpg' width='16px'></a>
+								<a href='editsupplier.php?kdSupplier=<?php echo $id ?>'><img src='img/edit.jpg' width='16px'></a>
 							</td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
-								<a href='hapus.php'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' ></a>
+							<a href='hapus.php?deletes=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
 							</td>
 						</tr>
-						";
+						<?php
 						}
 					} else{
 					$cari = $_POST['cari'];
@@ -115,21 +121,20 @@
 							$alamat = $tampil['Alamat'];
 							$nohp = $tampil['NoHP'];
 							$barang = $tampil['kdBarang'];
-							echo "
+							?>
 								<tr>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$id</td>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$nama</td>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$alamat</td>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$nohp</td>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$barang</td>
+									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $id ?></td>
+									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nama ?></td>
+									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $alamat ?></td>
+									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nohp ?></td>
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
-										<a href='admin.php?edit=$id'><img src='img/edit.jpg' width='16px' alt='Função Editar'></a>
+										<a href='editsupplier.php?kdSupplier=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='Função Editar'></a>
 									</td>
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
-										<a href='hapus.php'><img src='img/edit.jpg' width='16px' alt='fungsi hapus'></a>
+									<a href='hapus.php?deletes=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
 									</td>
 								</tr>
-								";
+								<?php
 						}
 					} else{
 						echo "
@@ -139,7 +144,7 @@
 								<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align='center'>Ditemukan!</td>
 							</tr>";
 					}echo "</table>
-					<center><a href='listsupplier.php'><br /><br />Complete list of items</a></center>
+					
 					";
 				} 
 				?>

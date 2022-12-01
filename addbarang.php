@@ -59,11 +59,11 @@
 						$NamaBarang = addslashes($_POST['NamaBarang']);
 						$jenis_barang = addslashes($_POST['jenis_barang']);
 						$desk = addslashes($_POST['deskripsi']);
-
 						$HargaBeli = addslashes($_POST['HargaBeli']);
 						$HargaJual = addslashes($_POST['HargaJual']);
 						$Stok = addslashes($_POST['Stok']);
 						$Satuan = addslashes($_POST['Satuan']);
+						$kdSupplier = addslashes($_POST['kdSupplier']);
 
 						$filename = $_FILES['gambar']['name'];
 						$tmp_name = $_FILES['gambar']['tmp_name'];
@@ -71,7 +71,7 @@
 						$type1 = explode('.', $filename);
 						$type2 = $type1[1];
 
-						$tipe_diizinkan = array('jpg', 'jpeg', 'png');
+						$tipe_diizinkan = array('jpg', 'jpeg', 'png', 'jfif');
 
 						if(!in_array($type2, $tipe_diizinkan)){
 							echo 'Format tidak sesuai!';
@@ -89,8 +89,8 @@
 						//}else if($NewID > 0){
 							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
 						//}else{
-							$insert = mysqli_query($conn, "INSERT INTO barang VALUES ('".$NewID."', '".$NamaBarang."', '".$jenis_barang."', '".$desk."', '".$filename."', '".$HargaBeli."', '".$HargaJual."', '".$Stok."', '".$Satuan."')");
-							$insert = mysqli_query($conn, "INSERT INTO admin_logs VALUES ('".$_SESSION['user_global']->NamaAdmin."', 'Menambahkan Barang: ".$NamaBarang."')");
+							$insert = mysqli_query($conn, "INSERT INTO barang VALUES ('".$NewID."', '".$NamaBarang."', '".$jenis_barang."', '".$desk."', 'http://localhost/img/produk/".$filename."', '".$HargaBeli."', '".$HargaJual."', '".$Stok."', '".$Satuan."', '".$kdSupplier."')");
+							$insert = mysqli_query($conn, "INSERT INTO admin_logs VALUES ('', '".$_SESSION['user_global']->NamaAdmin."', 'Menambahkan Barang: ".$NamaBarang."')");
 							
 							if($insert){
 								echo "<b style='color: green'>Barang Berhasil Ditambahkan. ID Barang: $NewID</b>";
@@ -125,7 +125,7 @@
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" placeholder="Deskripsi Barang..." name="deskripsi" required></textarea></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="file" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['deskripsi'])){ echo $_POST['deskripsi']; }?>" name="gambar" maxlength="255" required></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="file" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['gambar'])){ echo $_POST['gambar']; }?>" name="gambar" maxlength="255" required></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['HargaBeli'])){ echo $_POST['HargaBeli']; }else{ echo 0; } ?>" name="HargaBeli" maxlength="13"></td>
@@ -144,6 +144,21 @@
 								<option value="Liter">Liter</option>
 								<option value="Pcs">Pcs</option>
 								<option value="Ons">Ons</option>
+								<option value="Paket">Paket</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Supplier : </td>
+						<td>
+							<select name="kdSupplier" class="datepicker-trigger input-control hasDatepicker" required>
+								<option value=""> --Pilih-- </option>
+								<?php
+									$sup = mysqli_query($conn,"SELECT * FROM supplier ORDER BY kdSupplier DESC");
+									while($s = mysqli_fetch_array($sup)){
+									?>
+									<option value="<?php echo $s['kdSupplier'] ?>"><?php echo $s['NamaSupplier'] ?></option>
+									<?php } ?>
 							</select>
 						</td>
 					</tr>

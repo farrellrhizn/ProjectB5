@@ -57,7 +57,7 @@
 			<form action="listbarang.php" method="POST">
 				<h3> Cari Barang</h3>
 					<div class="input-control-add">
-						<input type="text" name="cari" id="cari" class="input-control-add" placeholder="Cari Barang...">
+						<input type="text" name="cari" id="cari" class="input-control-add" autocomplete="off" placeholder="Cari Barang...">
 							<button type="submit" name="submit" value="cari" class="input-group-btn" ><a>Cari </a></button>
 					</div>
 				</form>
@@ -127,7 +127,7 @@
 							<td align='center'><?php echo $id ?></td>
 							<td align='center'><?php echo $nama ?></td>
 							<td align='center'><?php echo $jenis_barang ?></td>
-							<td align='center'><img src="img/produk/<?php echo $gambar ?>" width="50px"></td>
+							<td align='center'><img src="<?php echo $gambar ?>" width="50px"></td>
 							<td align='center'><?php echo 'Rp. ' . number_format($HargaJual,2,',','.'); ?></td>
 							<td align='center'><?php echo $Stok ?></td>
 							<td align='center'><?php echo $Satuan ?></td>

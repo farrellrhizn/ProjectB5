@@ -55,8 +55,8 @@
 				<form action="" method="POST">
 				<h3> Cari Barang</h3>
 					<div class="input-control-add">
-						<input type="text" name="cari" id="cari" class="input-control-add" placeholder="Cari Barang...">
-							<button type="submit" name="submit" value="cari" class="input-group-btn"><a>Cari </a></button>
+						<input type="text" name="cari" autocomplete="off" id="cari" class="input-control-add" placeholder="Cari Barang...">
+						<button type="submit" name="submit" value="cari" class="input-group-btn"><a>Cari </a></button>
 					</div>
 				</form>
 				<form action="addbarang.php" method="GET">
@@ -68,7 +68,7 @@
 
 				</div>
 				</div>
-			<table align="center">
+			<table align="center" class="box-list">
 				<tr>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Kode Barang</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Nama Barang</b></td>
@@ -100,12 +100,12 @@
 							<td align='center'><?php echo $id ?></td>
 							<td align='center'><?php echo $nama ?></td>
 							<td align='center'><?php echo $jenis_barang ?></td>
-							<td align='center'><img src="img/produk/<?php echo $gambar ?>" width="50px"></td>
+							<td align='center'><img src="<?php echo $gambar ?>" width="50px"></td>
 							<td align='center'><?php echo 'Rp. ' . number_format($HargaJual,2,',','.'); ?></td>
 							<td align='center'><?php echo $Stok ?></td>
 							<td align='center'><?php echo $Satuan ?></td>
 							<td align='center'>
-								<a href='editbarang.php?edit=<?php echo $id?>'><img src='img/edit.jpg' width='16px'></a>
+								<a href='editbarang.php?kdBarang=<?php echo $id?>'><img src='img/edit.jpg' width='16px'></a>
 							</td>
 							<td align='center'>
 								<a href='hapus.php?delete=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
@@ -129,12 +129,12 @@
 									<td align='center'><?php echo $id ?></td>
 									<td align='center'><?php echo $nama ?></td>
 									<td align='center'><?php echo $jenis_barang ?></td>
-									<td align='center'><img src="img/produk/<?php echo $gambar ?>" width="50px"></td>
+									<td align='center'><img src="<?php echo $gambar ?>" width="50px"></td>
 									<td align='center'><?php echo 'Rp. ' . number_format($HargaJual,2,',','.'); ?></td>
 									<td align='center'><?php echo $Stok ?></td>
 									<td align='center'><?php echo $Satuan ?></td>
 									<td align='center'>
-										<a href='editbarang.php?edit=<?php echo $id?>'><img src='img/edit.jpg' width='16px'></a>
+										<a href='editbarang.php?kdBarang=<?php echo $id?>'><img src='img/edit.jpg' width='16px'></a>
 									</td>
 									<td align='center'>
 										<a href='hapus.php?delete=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
@@ -149,7 +149,6 @@
 								<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align='center'>Ditemukan!</td>
 							</tr>";
 					}echo "</table>
-					<center><a href='Listitem.php'><br /><br />Complete list of items</a></center>
 					";
 				} 
 				?>

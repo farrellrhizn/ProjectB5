@@ -26,7 +26,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
-            <form class="d-flex" class="ms-auto my-4 my-lg-0" action="" method="POST">
+            <form class="d-flex" class="ms-auto my-4 my-lg-0" action="index.php" method="POST">
                 <input class="form-control me-2" type="search" name="cari" id="cari" placeholder="Cari Barang..." >
                 <button type="submit" name="submit" class="btn btn-light" value="cari"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
@@ -127,7 +127,7 @@
         </div>
         <div class="row">
 			<?php 
-			if(!(isset($_POST['submit'])) ){
+			if(isset($_POST['kategori']) && (isset($_GET['submit'])) && (isset($_GET['cari'])) && (isset($_GET['jenis'])) ){
 			$cek = mysqli_query($conn,"SELECT * FROM barang ORDER BY jenis_barang DESC");
         while($tampil = mysqli_fetch_assoc($cek)){		
         $id = $tampil['kdBarang'];
@@ -155,46 +155,46 @@
                 </div>
             </div>
           </div>
-			
-    
 			<?php
-        }
-				}else{
-					$cari = $_POST['cari'];
-					$cek2 = mysqli_query($conn,"SELECT * FROM barang WHERE NamaBarang LIKE '%".$cari."%' OR jenis_barang LIKE '%".$cari."%' ");
-          if(mysqli_num_rows($cek2) > 0) {
-            while($tampil = mysqli_fetch_assoc($cek2)){		
+					}
+					}else{
+            $_GET['jenis'];
+            $cek2 = mysqli_query($conn,"SELECT * FROM barang WHERE jenis_barang = '".$_GET['jenis']."' ");
+            if(mysqli_num_rows($cek2) > 0){
+              while($tampil = mysqli_fetch_assoc($cek2)){		
               $id = $tampil['kdBarang'];
               $nama = $tampil['NamaBarang'];
               $gambar = $tampil['gambar'];
               $HargaJual = $tampil['HargaJual'];
               $Stok = $tampil['Stok'];
               $Satuan = $tampil['Satuan'];
-          ?>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-6 mt-2">
-              <div class="card text-center">
-                <img src="<?php echo $gambar ?>" class="card-img-top" alt="...">
-                    <div class="card-body">
-                      <h6 class="card-title"><?php echo $nama ?></h6>
-                          <div class="icon-bintang" style="color: orange;">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                          </div>
-                          <p class="card-text mt-2"><?php echo 'Rp. ' . number_format($HargaJual,2,',','.'); ?></p>
-                          <a>Tersedia : <?php echo $Stok ?> <?php echo $Satuan ?></a>
-                          <a href="detailproduk.php?kdBarang=<?php echo $id ?>" name="detail" class="btn btn-primary d-grid">Detail</a>
-                    </div>
+            ?>
+              <div class="col-lg-2 col-md-2 col-sm-4 col-6 mt-2">
+                <div class="card text-center">
+                  <img src="<?php echo $gambar ?>" class="card-img-top" alt="...">
+                      <div class="card-body">
+                        <h6 class="card-title"><?php echo $nama ?></h6>
+                            <div class="icon-bintang" style="color: orange;">
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                              <i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="card-text mt-2"><?php echo 'Rp. ' . number_format($HargaJual,2,',','.'); ?></p>
+                            <a>Tersedia : <?php echo $Stok ?> <?php echo $Satuan ?></a>
+                            <a href="detailproduk.php?kdBarang=<?php echo $id ?>" name="detail" class="btn btn-primary d-grid">Detail</a>
+                      </div>
+                  </div>
                 </div>
-              </div>
-				<?php 
-        }
-					}else{
-            echo 'Barang tidak Ditemukan';
+            
+          
+            <?php
+              }
+                }else{
+                  echo 'Barang dengan kategori dipilih masih kosong!';
+                }
           }
-					}
           }
 		
          

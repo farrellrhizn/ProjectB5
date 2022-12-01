@@ -50,18 +50,13 @@
 	<div class="section">
 		<div class="container">
 			<h1>Laporan Perhari</h1>
-			<div class="box">
-			<form action="" method="get">
-					<a>Tanggal : </a><input type="date" name="tgl" value="Laporan Perhari" class="input-laporan">
-					<input type="submit" name="cari" value="Submit" class="input-group-btn">
-			</form>
+			<div class="box-list">
 			<form action="cetak.php" method="get">
-					<button type="submit" name="cari" class="input-laporan-btn">Cetak</button>
+					<a>Tanggal : </a><input type="date" name="tgl" value="Laporan Perhari" class="input-laporan">
+					<button type="submit" name="cari" class="input-laporan-btn"><a>Cari</a></button>
 			</form>
-			
 			</div>
-			<div class="box">
-			<table align="center">
+			<table align="center" class="box-list">
 				<tr>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>No</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Kode Transaksi</b></td>
@@ -74,39 +69,21 @@
 				
 				<?php
 				$no = 1;
-				if(!(isset($_GET['cari']))){
-					$cek = mysqli_query($conn,"SELECT penjualan.kdPenjualan, detail_penjualan.kdBarang, 
-					detail_penjualan.Jumlah, detail_penjualan.TotalHarga, penjualan.Waktu
-					FROM detail_penjualan
-					JOIN penjualan
-					ON detail_penjualan.kdPenjualan = penjualan.kdPenjualan
-					ORDER BY penjualan.Waktu DESC");
-					while ($tampil = mysqli_fetch_array($cek)){
-					
-					$kdPenjualan = $tampil['kdPenjualan'];
-					$kdBarang = $tampil['kdBarang'];
-					$Jumlah = $tampil['Jumlah'];
-					$TotalHarga = $tampil['TotalHarga'];
-					$Waktu = $tampil['Waktu'];
-					?>
-						<tr>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $no++ ?></td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $kdPenjualan ?></td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $kdBarang ?></td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $Jumlah ?></td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo 'Rp. ' . number_format($TotalHarga,2,',','.');?></td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $Waktu ?></td>
-						</tr>
-						<?php }
+				if(isset($_GET['cari'])) {
+						$cek = mysqli_query($conn,"SELECT penjualan.kdPenjualan, detail_penjualan.kdBarang, 
+						detail_penjualan.Jumlah, detail_penjualan.TotalHarga, penjualan.Waktu
+						FROM detail_penjualan
+						JOIN penjualan
+						ON detail_penjualan.kdPenjualan = penjualan.kdPenjualan
+						WHERE penjualan.Waktu = '".$_GET['tgl']."' 
+						ORDER BY penjualan.Waktu DESC");
 					} else{
 					$cek = mysqli_query($conn, "SELECT penjualan.kdPenjualan, detail_penjualan.kdBarang, 
 						detail_penjualan.Jumlah, detail_penjualan.TotalHarga, penjualan.Waktu
 						FROM detail_penjualan
 						JOIN penjualan
 						ON detail_penjualan.kdPenjualan = penjualan.kdPenjualan
-						WHERE penjualan.Waktu = '".$_GET['tgl']."' 
 						ORDER BY penjualan.Waktu DESC"); 
-					if(mysqli_num_rows($cek) > 0){
 						while ($tampil = mysqli_fetch_array($cek)){
 							$kdPenjualan = $tampil['kdPenjualan'];
 							$kdBarang = $tampil['kdBarang'];
@@ -123,17 +100,7 @@
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $Waktu ?></td>
 								</tr>
 						<?php }
-					} else{
-						echo "
-							<tr>
-								<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align='center'>Laporan</td>
-								<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align='center'>Tidak</td>
-								<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align='center'>Ditemukan!</td>
-							</tr>";
-					}echo "</table>
-					<center><a href='Listitem.php'><br /><br />Complete list of items</a></center>
-					";
-				} 
+					} 
 				if(isset($_GET['cari']) && ($_GET['tgl'])){
 					$cek3 = mysqli_query($conn,"SELECT SUM(TotalHarga) FROM detail_penjualan");
 					while ($tampil = mysqli_fetch_array($cek3)){
@@ -144,7 +111,6 @@
 				
 		</div>
 		</table>
-			</div>
 			<!--<form action="" method="POST">
 				<div class="box">
 				<h3>Total Pendapatan</h3>

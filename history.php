@@ -55,7 +55,7 @@
 					
 			</div>
 			<table align="center">
-				<tr>
+				<tr><td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>No.</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Nama Admin</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Info</b></td>
 				</tr>
@@ -64,14 +64,15 @@
 				<?php
 				if(!(isset($_POST['submit']))){
 					
-					$cek = mysqli_query($conn,"SELECT * FROM admin_logs ");
+					$cek = mysqli_query($conn,"SELECT * FROM admin_logs ORDER BY id DESC");
 					while ($tampil = mysqli_fetch_array($cek)){
-
+					$id = $tampil['id'];
 					$nama = $tampil['nama'];
 					$info = $tampil['info'];
 	
 					echo "
 						<tr>
+							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$id</td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$nama</td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>$info</td>
 						</tr>

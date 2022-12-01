@@ -50,14 +50,13 @@
 
                 <?php 
 			        $no = 1;
-
-			        if(isset($_GET['tgl'])){
+			        if(isset($_GET['bln'])){
                 $cek = mysqli_query($conn, "SELECT penjualan.kdPenjualan, detail_penjualan.kdBarang, 
                 detail_penjualan.Jumlah, detail_penjualan.TotalHarga, penjualan.Waktu
                 FROM detail_penjualan
                 JOIN penjualan
                 ON detail_penjualan.kdPenjualan = penjualan.kdPenjualan
-                WHERE penjualan.Waktu = '".$_GET['tgl']."' 
+                WHERE penjualan.Waktu LIKE '%".$_GET['bln']."%' 
                 ORDER BY penjualan.Waktu DESC"); ?>
             <?php
 			        }else{
@@ -85,12 +84,12 @@
             </tbody>
     </table>
     <?php
-    if(isset($_GET['tgl'])){
+    if(isset($_GET['bln'])){
       $cek3 = "SELECT penjualan.Waktu,SUM(detail_penjualan.TotalHarga) AS total
       FROM penjualan 
       JOIN detail_penjualan 
       ON penjualan.kdPenjualan = detail_penjualan.kdPenjualan
-      WHERE penjualan.Waktu = '".$_GET['tgl']."' 
+      WHERE penjualan.Waktu LIKE '%".$_GET['bln']."%' 
       GROUP BY penjualan.Waktu";
 
       $result1 = mysqli_query($conn, $cek3);

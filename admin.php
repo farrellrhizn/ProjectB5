@@ -43,8 +43,8 @@
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="listsupplier.php">Transaksi</a></li>
-				<li><a href="listsupplier.php">Laporan</a></li>
-				<li><a href="logout.php">Logout</a></li>
+				<li><a href="laporan.php">Laporan</a></li>
+				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -55,8 +55,8 @@
 			<h3>Edit Profile</h3>
 			<div class="box">
 				<form action="" method="POST">
-					<input type="text" name="nama" placeholder="Nama Lengkap" class="input-control" value="<?php echo $d->NamaAdmin ?>" required>
-					<input type="text" name="user" placeholder="Username" class="input-control" value="<?php echo $d->Username ?>" required>
+					<input type="text" name="nama" autocomplete="off" placeholder="Nama Lengkap" class="input-control" value="<?php echo $d->NamaAdmin ?>" required>
+					<input type="text" name="user" autocomplete="off" placeholder="Username" class="input-control" value="<?php echo $d->Username ?>" required>
 					<input type="submit" name="submit" value="Ubah Profil" class="btn">
 				</form>
 				<?php
