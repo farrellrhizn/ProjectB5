@@ -152,6 +152,7 @@ header ul li a {
 	box-sizing: border-box;
 }
 .box-list {
+	width: 100%;
 	background-color: #FFF;
 	border: 1px solid rgb(0, 0, 0);
 	padding: 15px;
@@ -207,4 +208,22 @@ header ul li a {
 	text-decoration: none;
 	text-align: center;
 	font-size: larger;
+}
+.input-left {
+	width: 200px;
+	padding: 12px;
+	margin-bottom: 15px;
+	margin-right: 50px;
+	justify-content: center;
+}
+.input-right {
+	width: 200px;
+	padding: 12px;
+	margin-bottom: 15px;
+	margin-right: 50px;
+	justify-content: end;
+}
+.input-left,.input-right {
+    margin-top: 5px;
+    display: flex;
 }
