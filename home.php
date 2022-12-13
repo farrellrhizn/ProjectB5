@@ -27,6 +27,7 @@
     <title>Dashboard || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	
@@ -40,11 +41,10 @@
 				<li><a href="admin.php">Profile</a></li>
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
-				<li><a href="listsupplier.php">Transaksi</a></li>
+				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
-			<h4><br><br><br>Selamat Datang <?php echo $_SESSION['user_global']->NamaAdmin ?><br><br></h4>
 		</div>
 	</header>
 	
@@ -153,7 +153,26 @@
 			</div>
 		</div>
 	</div>
-				
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 	
 </body>
 

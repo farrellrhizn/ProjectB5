@@ -1,3 +1,24 @@
+<?php
+	session_start();
+	$timeout = 1; // setting timeout dalam menit
+	$logout = "login.php"; // redirect halaman logout
+
+	$timeout = $timeout * 360; // menit ke detik
+	if(isset($_SESSION['start_session'])){
+		$elapsed_time = time()-$_SESSION['start_session'];
+		if($elapsed_time >= $timeout){
+			session_destroy();
+			echo "<script type='text/javascript'>alert('Sesi telah berakhir');window.location='$logout'</script>";
+		}
+	}
+
+	$_SESSION['start_session']=time();
+
+	include('config.php');
+	if($_SESSION['status_login'] != true){
+		echo '<script>window.location="login.php"</script>';
+	}
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -89,8 +110,18 @@
       FROM penjualan 
       JOIN detail_penjualan 
       ON penjualan.kdPenjualan = detail_penjualan.kdPenjualan
-      WHERE penjualan.Waktu LIKE '%".$_GET['bln']."%' 
-      GROUP BY penjualan.Waktu";
+      WHERE penjualan.Waktu LIKE '%".$_GET['bln']."%' ";
+
+      $result1 = mysqli_query($conn, $cek3);
+      if ($result1->num_rows > 0) {
+      $tampil3 = mysqli_fetch_array($result1);
+      $total = $tampil3['total'];
+      }else $total = 0;
+    }else{
+      $cek3 = "SELECT penjualan.Waktu,SUM(detail_penjualan.TotalHarga) AS total
+      FROM penjualan 
+      JOIN detail_penjualan 
+      ON penjualan.kdPenjualan = detail_penjualan.kdPenjualan";
 
       $result1 = mysqli_query($conn, $cek3);
       if ($result1->num_rows > 0) {

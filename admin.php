@@ -30,6 +30,7 @@
     <title>Profile || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	
@@ -42,9 +43,9 @@
 				<li><a href="admin.php">Profile</a></li>
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
-				<li><a href="listsupplier.php">Transaksi</a></li>
+				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -70,10 +71,29 @@
 						Username = '".$user."'
 						WHERE idAdmin = '".$d->idAdmin."'");
 						if($update){
-							echo '<script>alert("Ubah data admin berhasil")</script>';
-							echo '<script>window.location="admin.php"</script>';
+						?>
+						<script>
+						Swal.fire({
+							title: 'Berhasil!',
+							text: 'Ubah Data Profil Berhasil!',
+							icon: 'success'
+						}).then((result) => {
+							window.location="admin.php";
+						})
+						</script>
+						<?php
 						}else{
-							echo 'gagal'.mysqli_error($conn);
+						?>
+						<script>
+						Swal.fire({
+							icon: 'error',
+							title: 'Oops...',
+							text: 'gagal'
+						}).then((result) => {
+							window.location="admin.php";
+						})
+						</script>
+						<?php
 						}
 						
 					}
@@ -95,16 +115,43 @@
 						$pass2 	= $_POST['pass2'];
 						
 						if($pass2 != $pass1){
-							echo '<script>alert("Konfirmasi Password Baru tidak sesuai!")</script>';
+							?>
+								<script>
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Konfirmasi Password Baru Tidak Sesuai!',
+								})
+								</script>
+								<?php
 						}else{
 							$u_pass = mysqli_query($conn, "UPDATE penjual SET
 									Password = '".MD5($pass1)."'
 									WHERE idAdmin = '".$d->idAdmin."'");
 							if($u_pass){
-								echo '<script>alert("Ubah Password berhasil")</script>';
-								echo '<script>window.location="admin.php"</script>';
+								?>
+								<script>
+								Swal.fire({
+									title: 'Berhasil!',
+									text: 'Ubah Password Berhasil!',
+									icon: 'success'
+								}).then((result) => {
+									window.location="admin.php";
+								})
+								</script>
+								<?php
 							}else{
-								echo 'gagal'.mysqli_error($conn);
+								?>
+								<script>
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'gagal'
+								}).then((result) => {
+									window.location="admin.php";
+								})
+								</script>
+								<?php
 							}
 						}
 						
@@ -122,5 +169,25 @@
 			</div>
 		</footer>
 	</div>
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 </body>
 </html>

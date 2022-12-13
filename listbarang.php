@@ -27,6 +27,7 @@
     <title>Dashboard || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	
@@ -39,9 +40,9 @@
 				<li><a href="admin.php">Profile</a></li>
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
-				<li><a href="listsupplier.php">Transaksi</a></li>
+				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -108,7 +109,7 @@
 								<a href='editbarang.php?kdBarang=<?php echo $id?>'><img src='img/edit.jpg' width='16px'></a>
 							</td>
 							<td align='center'>
-								<a href='hapus.php?delete=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
+								<a href='hapus.php?delete=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' id='btn-hapus'></a>
 							</td>
 						</tr>
 						<?php }
@@ -137,7 +138,7 @@
 										<a href='editbarang.php?kdBarang=<?php echo $id?>'><img src='img/edit.jpg' width='16px'></a>
 									</td>
 									<td align='center'>
-										<a href='hapus.php?delete=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
+										<a href='hapus.php?delete=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' id="btn-hapus"></a>
 									</td>
 								</tr>
 						<?php }
@@ -163,8 +164,47 @@
 			<span>Copyright &copy; 2022 - Sembakouu.</span> © <a href="https://www.instagram.com/farishasan_13/" target="_blank">Developer</a>
 		</div>
 	</footer>
-	
-	
+
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#btn-hapus', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Data akan dihapus!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Hapus Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='hapus.php?delete=<?php echo $id?>';				
+				}
+			})
+		})
+	</script>
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 </body>
 
 </html>

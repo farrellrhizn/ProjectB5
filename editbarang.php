@@ -41,7 +41,7 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -52,65 +52,24 @@
 			<h3>Edit Barang</h3>
 			<div class="box">
 				<?php
-			
-					if(isset($_POST['simpan']) ){
-						
-						$NamaBarang = addslashes($_POST['NamaBarang']);
-						$jenis_barang = addslashes($_POST['jenis_barang']);
-						$desk = addslashes($_POST['deskripsi']);
-						$gambar = addslashes($_POST['gambar']);
-						$HargaBeli = addslashes($_POST['HargaBeli']);
-						$HargaJual = addslashes($_POST['HargaJual']);
-						$Stok = addslashes($_POST['Stok']);
-						$Satuan = addslashes($_POST['Satuan']);
-						$kdSupplier = addslashes($_POST['kdSupplier']);
+							$kdBarang = $_GET['kdBarang'];
+							$cek2 = mysqli_query($conn,"SELECT * FROM barang WHERE kdBarang = '".$kdBarang."' ");
+							while ($tampil = mysqli_fetch_array($cek2)){
 
-						
-						//if(empty($NewID) || ($NewID <= 0)){
-							//echo "<b style='color: red'>Isi semua kolom dengan benar!</b>";
-						//}else if($NewID > 0){
-							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
-						//}else{
-							if(mysqli_query($conn, "UPDATE barang SET `NamaBarang` = '".$NamaBarang."', `jenis_barang` = '".$jenis_barang."', `deskripsi` = '".$desk."',  `gambar` = '".$gambar."', `HargaBeli` = '".$HargaBeli."', `HargaJual` = '".$HargaJual."', `Stok` = '".$Stok."', `Satuan` = '".$Satuan."', `kdSupplier` = '".$kdSupplier."' WHERE kdBarang = '".$_GET['kdBarang']."' ")){
-							mysqli_query($conn,"INSERT INTO admin_logs VALUES ('', '".$_SESSION['user_global']->NamaAdmin."', 'Mengedit Barang: ".$NamaBarang."')");
 							
-							echo "<div class='alert alert-success fade in block-inner'>
-							<button type='button' class='close' data-dismiss='alert'></button>
-							Edit Barang Berhasil! - Dialihkan dalam 5 detik...<script type='text/javascript' language='JavaScript'>
-							setTimeout(function () { location.href = 'listbarang.php';
-							}, 5000);
-							</script>
-							</div>";
-							}else{
-							echo "<b style='color: red'>Semua field sudah diisi dengan benar, namun terjadi error saat pengiriman ke database, silahkan coba lagi nanti</b><br /><br />";
-							}
-					} else{
-						$kdBarang = $_GET['kdBarang'];
-						$cek2 = mysqli_query($conn,"SELECT * FROM barang WHERE kdBarang = '".$kdBarang."' ");
-						while ($tampil = mysqli_fetch_array($cek2)){
-						
-						$kdBarang = $tampil['kdBarang'];
-						$NamaBarang = ($tampil['NamaBarang']);
-						$jenis_barang = ($tampil['jenis_barang']);
-						$desk = ($tampil['deskripsi']);
-						$gambar = ($tampil['gambar']);
-						$HargaBeli = ($tampil['HargaBeli']);
-						$HargaJual = ($tampil['HargaJual']);
-						$Stok = ($tampil['Stok']);
-						$Satuan = ($tampil['Satuan']);
-						$kdSupplier = ($tampil['kdSupplier']);
-						}
-					}
 				?>
-				<form action="" method="POST">
+				<form action="updatebarang.php" method="POST" enctype="multipart/form-data">
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaBarang" value="<?php echo $NamaBarang ?>" maxlength="255"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right"></td><td><input type="hidden" class="datepicker-trigger input-control hasDatepicker" name="kdBarang" value="<?php echo $tampil['kdBarang'] ?>" maxlength="255"></td>
+					</tr>
+					<tr>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" name="NamaBarang" value="<?php echo $tampil['NamaBarang'] ?>" maxlength="255"></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jenis Barang : </td>
 						<td>
 							<select name="jenis_barang"  class="input-control" onchange="exibeMsg(this.value);">
-								<option value="<?php echo $jenis_barang ?>"><?php echo $jenis_barang ?></option>
+								<option value="<?php echo $tampil['jenis_barang'] ?>"><?php echo $tampil['jenis_barang'] ?></option>
 								<option value="Sembako">Sembako</option>
 								<option value="Alat Tulis">Alat Tulis</option>
 								<option value="Minuman">Minuman</option>
@@ -123,25 +82,27 @@
 						</td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" placeholder="Deskripsi..." name="deskripsi"><?php echo $desk ?></textarea></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Deskripsi : </td><td><textarea type="text" class="datepicker-trigger input-control hasDatepicker" placeholder="Deskripsi..." name="deskripsi"><?php echo $tampil['deskripsi'] ?></textarea></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $gambar ?>" name="gambar" maxlength="255" ></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Gambar : </td>
+						<td><input type="file" class="datepicker-trigger input-control hasDatepicker" name="image" accept="image/png, image/jpg, image/jpeg, image/jfif maxlength="255"></td>
+						<td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $tampil['gambar'] ?>" name="gambarlawas" maxlength="255" ></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $HargaBeli ?>" name="HargaBeli" maxlength="13"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Beli <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $tampil['HargaBeli'] ?>" name="HargaBeli" maxlength="13"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Jual <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $HargaJual ?>" name="HargaJual" maxlength="13"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Jual <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $tampil['HargaJual'] ?>" name="HargaJual" maxlength="13"></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Stok <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $Stok ?>" name="Stok" maxlength="13"></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Stok <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php echo $tampil['Stok'] ?>" name="Stok" maxlength="13"></td>
 					</tr>
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Satuan : </td>
 						<td>
-							<select name="Satuan" value="<?php echo $Satuan ?>" class="datepicker-trigger input-control hasDatepicker" onchange="exibeMsg(this.value);">
-								<option value="<?php echo $Satuan ?>"><?php echo $Satuan ?></option>
+							<select name="Satuan" value="<?php echo $tampil['Satuan'] ?>" class="datepicker-trigger input-control hasDatepicker" onchange="exibeMsg(this.value);">
+								<option value="<?php echo $tampil['Satuan'] ?>"><?php echo $tampil['Satuan'] ?></option>
 								<option value="Kilogram">Kilogram</option>
 								<option value="Liter">Liter</option>
 								<option value="Pcs">Pcs</option>
@@ -173,7 +134,7 @@
 							</select>
 						</td>
 					</tr>
-					
+					<?php } ?>
 					<input type="submit" name="simpan" value="Simpan" class="btn">
 				</form>
 			</div>
@@ -188,5 +149,25 @@
 		</div>
 	</footer>
 	</div>
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 </body>
 </html>

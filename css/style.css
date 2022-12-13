@@ -210,18 +210,20 @@ header ul li a {
 	font-size: larger;
 }
 .input-left {
-	width: 200px;
+	width: 180px;
 	padding: 12px;
-	margin-bottom: 15px;
-	margin-right: 50px;
-	justify-content: center;
+	margin-bottom: 5px;
+	margin-right: 20px;
+	justify-content: right;
+	float: left;
 }
 .input-right {
-	width: 200px;
+	width: 120px;
 	padding: 12px;
 	margin-bottom: 15px;
-	margin-right: 50px;
-	justify-content: end;
+	margin-right: 20px;
+	justify-content: center;
+	float: right;
 }
 .input-left,.input-right {
     margin-top: 5px;

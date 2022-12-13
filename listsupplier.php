@@ -27,6 +27,7 @@
     <title>Supplier || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	
@@ -39,9 +40,9 @@
 				<li><a href="admin.php">Profile</a></li>
 				<li><a href="listbarang.php">Barang</a></li>
 				<li><a href="listsupplier.php">Supplier</a></li>
-				<li><a href="listsupplier.php">Transaksi</a></li>
+				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -74,39 +75,31 @@
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Nama Supplier</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>Alamat</b></td>
 					<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align="center"><b>No HP</b></td>
-					<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center"><b>Gambar</b></td>
-					<td style='border: 1px #000; padding: 10px 10px 10px 10px;' align="center"><b>Action</b></td>
+					<td style='border: 1px #000; padding: 10px 0px 10px 35px;' align="center"><b>Action</b></td>
 				</tr>
 			
 			
 				<?php
 				if(!(isset($_POST['submit']))){
 					
-					$cek = mysqli_query($conn,"SELECT supplier.kdSupplier, supplier.NamaSupplier,
-					supplier.Alamat, supplier.NoHP, barang.gambar 
-					FROM supplier
-					RIGHT JOIN barang
-					ON supplier.kdSupplier = barang.kdSupplier
-					GROUP BY kdSupplier ASC ");
+					$cek = mysqli_query($conn,"SELECT * FROM supplier ");
 					while ($tampil = mysqli_fetch_array($cek)){
 					
 					$id = $tampil['kdSupplier'];
 					$nama = $tampil['NamaSupplier'];
 					$alamat = $tampil['Alamat'];
 					$nohp = $tampil['NoHP'];
-					$gambar = $tampil['gambar'];
 					?>
 						<tr>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $id ?></td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nama ?></td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $alamat ?></td>
 							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nohp ?></td>
-							<td align='center'><img src="<?php echo $gambar ?>" width="50px"></td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
+							<td align='center'>
 								<a href='editsupplier.php?kdSupplier=<?php echo $id ?>'><img src='img/edit.jpg' width='16px'></a>
 							</td>
-							<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
-							<a href='hapus.php?deletes=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
+							<td align='center'>
+							<a href='hapus.php?deletes=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' id="btn-hapuss"></a>
 							</td>
 						</tr>
 						<?php
@@ -120,18 +113,17 @@
 							$nama = $tampil['NamaSupplier'];
 							$alamat = $tampil['Alamat'];
 							$nohp = $tampil['NoHP'];
-							$barang = $tampil['kdBarang'];
 							?>
 								<tr>
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $id ?></td>
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nama ?></td>
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $alamat ?></td>
 									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'><?php echo $nohp ?></td>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
+									<td align='center'>
 										<a href='editsupplier.php?kdSupplier=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='Função Editar'></a>
 									</td>
-									<td style='border: 1px #000; padding: 10px 25px 10px 25px;' align='center'>
-									<a href='hapus.php?deletes=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' onClick="return confirm('apakah kamu yakin?')"></a>
+									<td align='center'>
+									<a href='hapus.php?deletes=<?php echo $id?>'><img src='img/edit.jpg' width='16px' alt='fungsi hapus' id="btn-hapuss"></a>
 									</td>
 								</tr>
 								<?php
@@ -150,8 +142,46 @@
 				?>
 		</div>
 	</div>
-	
-	
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#btn-hapuss', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Data akan dihapus!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Hapus Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='hapus.php?deletes=<?php echo $id?>';				
+				}
+			})
+		})
+	</script>
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 </body>
 
 </html>

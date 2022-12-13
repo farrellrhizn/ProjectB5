@@ -18,15 +18,18 @@
 	if($_SESSION['status_login'] != true){
 		echo '<script>window.location="login.php"</script>';
 	}
+	
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width-device-width, initial-scale=1">
-    <title>Barang || Sembakouu</title>
+    <title>Transaksi || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	
@@ -41,112 +44,328 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
 	
 	<!-- Content -->
+	<h2 style="padding: 10px 15px 10px 15px; margin-left: 20%;">Transaksi</h2>
+	<?php
+	$sql = "SELECT * FROM penjualan ORDER BY kdPenjualan DESC LIMIT 1";
+	
+    $query = mysqli_query($conn, $sql);
+
+    $data = mysqli_fetch_array($query);
+
+	$sql = "SELECT * FROM penjual ";
+    $query = mysqli_query($conn, $sql);
+
+    $data = mysqli_fetch_array($query);
+    $idAdmin = $data['idAdmin'];
+
+	$sql = "SELECT MAX(kdPenjualan) FROM penjualan";
+	$query = mysqli_query($conn, $sql);
+	$data = mysqli_fetch_array($query);
+	$MaxID = $data[0];
+	$id = (int) substr($MaxID,1,4);
+	$MaxID++;
+	$NewID = "".sprintf("%04s",$MaxID++);
+	?>
 	<div class="section">
 		<div class="container">
-			<h3>Tambah Barang</h3>
-			<table border="0px" align="left" style="background-color:#FFFFFF;font-size:14px;font-family:'Roboto',Arial,Helvetica,sans-serif;color:#34495E;border-radius:30px;">
-				<?php
-					if(isset($_POST['tambah'])){
-						$cek = mysqli_query($conn,"SELECT MAX(kdBarang) FROM Barang");
-						while ($tampil = mysqli_fetch_array($cek)){
+				<label for="kdPenjualan" class="input-left">Kode Transaksi :</label>
+				<input type="text" value="<?= $NewID ?>" name="kdPenjualan" id="kdPenjualan" class="input-left" disabled>
 
-						$NamaBarang = addslashes($_POST['NamaBarang']);
-						$jenis_barang = addslashes($_POST['jenis_barang']);
-						$desk = addslashes($_POST['deskripsi']);
+				<label for="NamaAdmin" class="input-left">Nama Admin</label>
+				<input type="text" name="NamaAdmin" id="NamaAdmin" value="<?php echo $_SESSION['user_global']->NamaAdmin; ?>" class="input-left" disabled>
 
-						$HargaBeli = addslashes($_POST['HargaBeli']);
-						$HargaJual = addslashes($_POST['HargaJual']);
-						$Stok = addslashes($_POST['Stok']);
-						$Satuan = addslashes($_POST['Satuan']);
-
-						$filename = $_FILES['gambar']['name'];
-						$tmp_name = $_FILES['gambar']['tmp_name'];
-
-						$type1 = explode('.', $filename);
-						$type2 = $type1[1];
-
-						$tipe_diizinkan = array('jpg', 'jpeg', 'png', 'jfif');
-
-						if(!in_array($type2, $tipe_diizinkan)){
-							echo 'Format tidak sesuai!';
-						}else{
-							move_uploaded_file($tmp_name, './img/produk/'.$filename);
-						}
-
-						$MaxID = $tampil[0];
-						$id = (int) substr($MaxID,1,4);
-						$MaxID++;
-						$NewID = "".sprintf("%04s",$MaxID++);
-
-						//if(empty($NewID) || ($NewID <= 0)){
-							//echo "<b style='color: red'>Isi semua kolom dengan benar!</b>";
-						//}else if($NewID > 0){
-							//echo "<b style='color: red'>Sudah ada Barang dengan ID itu</b>";
-						//}else{
-							$insert = mysqli_query($conn, "INSERT INTO barang VALUES ('".$NewID."', '".$NamaBarang."', '".$jenis_barang."', '".$desk."', '".$filename."', '".$HargaBeli."', '".$HargaJual."', '".$Stok."', '".$Satuan."')");
-							$insert = mysqli_query($conn, "INSERT INTO admin_logs VALUES ('".$_SESSION['user_global']->NamaAdmin."', 'Menambahkan Barang: ".$NamaBarang."')");
-							
-							if($insert){
-								echo "<b style='color: green'>Barang Berhasil Ditambahkan. ID Barang: $NewID</b>";
-							}else{
-								echo "<b style='color: red'>Semua kolom telah diisi dengan benar, tetapi terjadi kesalahan saat mengirim ke database, silakan coba lagi nanti!</b>";
-							}
-						}
-						echo "<br /><br />";
-					}
-				//}
-				?>
-				<form action="" method="POST" enctype="multipart/form-data">
-					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Tanggal Transaksi : </td><td><input type="text" disabled class="input-left" name="NamaBarang" value="<?php echo date('d F Y'); ?>" required></td>
-					</tr>
-					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Pembeli : </td><td><input type="text" class="input-left" name="nama_pembeli" value="<?php if(isset($_POST['nama_pembeli'])){ echo $_POST['nama_pembeli']; } ?>" required></td>
-					</tr>
-					<tr>
-						<br><td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Barang : </td>
-						<td>
-							<select name="kdBarang" class="input-left" required>
-								<option value=""> --Pilih-- </option>
-								<?php
-									$barang = mysqli_query($conn,"SELECT * FROM barang ORDER BY NamaBarang DESC");
-									while($r = mysqli_fetch_array($barang)){
-									?>
-									<option value="<?php echo $r['NamaBarang'] ?>"><?php echo $r['NamaBarang'] ?></option>
-									<?php } ?>
-							</select>
-						</td></br>
-					</tr>
-					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Harga Satuan : <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class="input-right" value="<?php if(isset($_GET['kdBarang'])){ echo $_POST['HargaJual']; } ?>" name="HargaJual" maxlength="13"></td>
-					</tr>
-					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Jumlah : <font color="red" style="font-size: 10px;">(Only Numbers)</font>: </td><td><input type="text" class=" input-right " value="<?php if(isset($_POST['Stok'])){ echo $_POST['Stok'];} ?>" name="Stok" maxlength="13"></td>
-					</tr>
-					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Satuan : </td><td><input type="text" disabled class=" input-right" name="Satuan" value="<?php if(isset($_POST['Satuan'])){ echo $_POST['Satuan']; } ?>" required></td>
-					</tr>
-					
-					<input type="submit" name="tambah" value="Tambah" class="btn">
-				</form>
+				<label for="Waktu" class="input-left">Tanggal</label>
+				<input type="text" name="Waktu" id="Waktu" value="<?php echo date('d F Y') ?>" class="input-left" disabled>
 				
-									</table>
+
+				<p>
+					<label for="NamaBarang" class="input-left">Pilih Produk</label>
+					<select name="NamaBarang" id="NamaBarang" class="input-left">
+						<option class="input-left" value="0">-- Pilih Produk --</option>
+						<?php
+					
+						$no = 1;
+						$qry = mysqli_query($conn, "SELECT * FROM barang ");
+						while ($data=mysqli_fetch_array($qry)) {
+							$Stok = $data['Stok'];
+						?>
+						<option class="input-left" data="<?= $data['NamaBarang'] ?>" value="<?= $data['kdBarang'] ?>"><?= $data['NamaBarang'] ?>
+						</option>
+						<?php }
+					?>
+					</select>
+
+					<label for="Stok" class="input-left">Stok</label>
+					<input type="number" name="Stok" id="Stok" disabled class="input-left">
+				</p>
+				<p>
+					
+					<label for="Jumlah" class="input-left">Jumlah</label>
+					<input type="number" name="Jumlah" id="Jumlah" min="0" class="input-left">
+				</p>
+				<p>
+					<label for="HargaJual" class="input-left">Harga</label>
+					<input type="number" name="HargaJual" id="HargaJual" disabled class="input-left">
+					<label for="TotalHarga" class="input-left">Total</label>
+					<input type="number" name="TotalHarga" id="TotalHarga" class="input-left" disabled>
+				</p>
+				<p>
+					<label for="bayar" class="input-left">Total Bayar</label>
+					<input type="number" name="TotalBayar" id="bayar" class="input-left" disabled>
+					<button id="bayar_transaksi" class="input-right">Bayar</button>
+					<button id="batal_transaksi" class="input-right">Batal</button>
+				</p>
+				<p>
+					<button id="proses" name="proses" class="input-right">Tambah</button>
+				</p>
+				
+				<table border="1" align="center" width="100%">
+					<thead>
+						<tr>
+							<td align="center">No</td>
+							<td align="center">Nama Barang</td>
+							<td align="center">Harga</td>
+							<td align="center">Jumlah</td>
+							<td align="center">Total</td>
+						</tr>
+					</thead>
+					<tbody id="list_pesan">
+
+					</tbody>
+				</table>
+				<script src="jquery.js"></script>
+				<script>
+					$(function () {
+						$('#NamaBarang').on('click', function () {
+							let kdBarang = $('#NamaBarang option:selected').attr('value');
+							let NamaBarang = $('#NamaBarang option:selected').attr('data');
+							$.ajax({
+								url: 'http://localhost/getbarang.php',
+								data: {
+									kdBarang: kdBarang,
+									NamaBarang: NamaBarang
+								},
+								type: 'json',
+								method: 'post',
+								success: function (data) {
+									$('#HargaJual').val(data);
+									
+								}
+							})
+						})
+						$(function () {
+						$('#NamaBarang').on('click', function () {
+							let kdBarang = $('#NamaBarang option:selected').attr('value');
+							let NamaBarang = $('#NamaBarang option:selected').attr('data');
+							$.ajax({
+								url: 'http://localhost/getstok.php',
+								data: {
+									kdBarang: kdBarang,
+									NamaBarang: NamaBarang
+								},
+								type: 'json',
+								method: 'post',
+								success: function (data) {
+									$('#Stok').val(data);
+									
+								}
+							})
+						})
+
+						$('#Jumlah').on('change', function () {
+							let HargaJual = $('#HargaJual').val();
+							let Jumlah = $('#Jumlah').val();
+							let TotalHarga = HargaJual * Jumlah;
+							$('#TotalHarga').val(TotalHarga);
+						})
+
+
+						let bayar_kasir = 0;
+						let order = [];
+						let no = 1;
+						$('#proses').on('click', function () {
+							let list = [];
+
+							// Mengambil nilai input
+							
+							let kdPenjualan = $('#kdPenjualan').val();
+							let kdBarang = $('#NamaBarang option:selected').attr('value');
+							let NamaBarang = $('#NamaBarang option:selected').attr('data');
+							let Stok = $('#Stok').val()
+							let Jumlah = $('#Jumlah').val()
+							let HargaJual = $('#HargaJual').val()
+							let TotalHarga = parseInt($('#TotalHarga').val())
+
+							if  (Jumlah > Stok){
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Jumlah Barang melebihi Stok!',
+								})
+							}else if (Jumlah == "") {
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Isi Jumlah Pesanan Terlebih Dahulu!',
+								})
+							}else if (Jumlah == "0"){
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Isi Jumlah Pesanan Terlebih Dahulu!',
+								})
+							}else{
+								$.ajax({
+									url: 'http://localhost/tambahdetail.php',
+									data: {
+										kdPenjualan: kdPenjualan,
+										kdBarang: kdBarang,
+										NamaBarang: NamaBarang,
+										HargaJual: HargaJual,
+										Stok: Stok,
+										Jumlah: Jumlah,
+										TotalHarga: TotalHarga,
+									},
+									method: 'post',
+									dataType: 'json',
+									success: function (data) {
+										console.log(data);
+									}
+								})
+
+								// Menambahkna ke array list
+								list.push({
+									'kdBarang': kdBarang,
+									'NamaBarang': NamaBarang,
+									'HargaJual': HargaJual,
+									'Stok': Stok,
+									'Jumlah': Jumlah,
+									'TotalHarga': TotalHarga
+								});
+
+								// Otomotis menjumlahkan total bayar
+								bayar_kasir += TotalHarga;
+								$('#bayar').val(bayar_kasir);
+
+								// Melakukan pengulangan di list pesanan
+								$.each(list, function (i, data) {
+									$('#list_pesan').append(`
+									<tr>
+										<td>` + no++ + `</td>
+										<td>` + data.NamaBarang + `</td>
+										<td>` + data.HargaJual + `</td>
+										<td>` + data.Jumlah + `</td>
+										<td>` + data.TotalHarga + `</td>
+									</tr>
+								`)
+								})
+
+								// Menghapus nilai
+								$('#NamaBarang').val("")
+								$('#HargaJual').val("");
+								$('#Jumlah').val("");
+								$('#TotalHarga').val("")
+							}
+						
+						})
+
+						$('#batal_transaksi').on('click', function () {
+							let kdPenjualan = $('#kdPenjualan').val();
+							let TotalBayar = $('#bayar').val();
+
+							if (TotalBayar == "") {
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Tambah Menu Terlebih Dahulu!',
+								})
+								console.log("oke")
+							} else {
+								$.ajax({
+									url: 'http://localhost/bataltransaksi.php',
+									data: {
+										kdPenjualan: kdPenjualan
+									},
+									method: 'post',
+									dataType: 'json',
+									success: function (data) {
+
+									}
+								})
+								Swal.fire({
+									icon: 'success',
+									title: 'Berhasil!',
+									text: 'Transaksi Berhasil Dibatalkan!',
+								})
+								window.location.reload();
+							}
+						})
+
+						$('#bayar_transaksi').on('click', function () {
+							let NamaAdmin = $('#NamaAdmin').val();
+							let kdPenjualan = $('#kdPenjualan').val();
+							let TotalBayar = $('#bayar').val();
+
+							if (TotalBayar == "") {
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Tambah Menu Terlebih Dahulu!',
+								})
+							} else {
+								$.ajax({
+									url: 'http://localhost/bayartransaksi.php',
+									data: {
+										kdPenjualan: kdPenjualan,
+										NamaAdmin: NamaAdmin,
+										TotalBayar: TotalBayar
+									},
+									method: 'post',
+									dataType: 'json',
+									success: function (data) {
+
+									}
+								})
+								Swal.fire({
+									icon: 'success',
+									title: 'Berhasil!',
+									text: 'Transaksi Berhasil Ditambahkan!',
+								})
+								window.location.reload();
+								window.location.href = 'http://localhost/print.php?id=' + kdPenjualan
+							}
+						})
+					})
+				})
+				</script>
+			</div>
 		</div>
-		<!-- Footer -->
-	<footer class="container">
-		<div class="pull-right">
-			<a href="" target="_blank">Group B5</a>
-		</div>
-		<div class="pull-left">
-			<span>Copyright &copy; 2022 - Sembakouu.</span> © <a href="https://www.instagram.com/farishasan_13/" target="_blank">Developer</a>
-		</div>
-	</footer>
 	</div>
+	<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 </body>
 </html>

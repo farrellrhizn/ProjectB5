@@ -27,6 +27,7 @@
     <title>Barang || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
 	
@@ -41,7 +42,7 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -93,12 +94,22 @@
 							$insert = mysqli_query($conn, "INSERT INTO admin_logs VALUES ('', '".$_SESSION['user_global']->NamaAdmin."', 'Menambahkan Barang: ".$NamaBarang."')");
 							
 							if($insert){
-								echo "<b style='color: green'>Barang Berhasil Ditambahkan. ID Barang: $NewID</b>";
+								?>
+								<script>
+								Swal.fire({
+									title: 'Berhasil!',
+									text: 'Barang Berhasil Ditambahkan. ID Barang: <?php echo $NewID ?>',
+									icon: 'success'
+								}).then((result) => {
+									window.location="listbarang.php";
+								})
+								</script>
+								<?php
+								
 							}else{
 								echo "<b style='color: red'>Semua kolom telah diisi dengan benar, tetapi terjadi kesalahan saat mengirim ke database, silakan coba lagi nanti!</b>";
 							}
 						}
-						echo "<br /><br />";
 					}
 				//}
 				?>
@@ -151,7 +162,7 @@
 					<tr>
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Nama Supplier : </td>
 						<td>
-							<select name="kdSupplier" class="datepicker-trigger input-control hasDatepicker" required>
+							<select name="kdSupplier" class="datepicker-trigger input-control hasDatepicker">
 								<option value=""> --Pilih-- </option>
 								<?php
 									$sup = mysqli_query($conn,"SELECT * FROM supplier ORDER BY kdSupplier DESC");

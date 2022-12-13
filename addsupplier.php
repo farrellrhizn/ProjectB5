@@ -41,7 +41,7 @@
 				<li><a href="listsupplier.php">Supplier</a></li>
 				<li><a href="transaksi.php">Transaksi</a></li>
 				<li><a href="laporan.php">Laporan</a></li>
-				<li><a href="logout.php" onClick="return confirm('apakah kamu yakin?')">Logout</a></li>
+				<li><a href="logout.php" id="logout">Logout</a></li>
 			</ul>
 		</div>
 	</header>
@@ -91,7 +91,7 @@
 						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">Alamat : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['Alamat'])){ echo $_POST['Alamat']; }?>" placeholder="Alamat..." name="Alamat" required></td>
 					</tr>
 					<tr>
-						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">No HP : </td><td><input type="text" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['NoHP'])){ echo $_POST['NoHP']; }?>" placeholder="No HP..." name="NoHP" maxlength="12" required></td>
+						<td style='border: 1px #000; padding: 10px 50px 10px 50px;' align="right">No HP : </td><td><input type="number" class="datepicker-trigger input-control hasDatepicker" value="<?php if(isset($_POST['NoHP'])){ echo $_POST['NoHP']; }?>" placeholder="No HP..." name="NoHP" maxlength="12" required></td>
 					</tr>
 					
 					<input type="submit" name="tambah" value="Tambah" class="btn">
@@ -109,4 +109,24 @@
 	</footer>
 	</div>
 </body>
+<script src="jquery.js"></script>
+	<script>
+		$(document).on('click', '#logout', function(e) {
+			e.preventDefault();
+
+			Swal.fire({
+				title: 'Apakah anda yakin?',
+				text: "Anda akan Keluar!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#3085d6',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Ya, Keluar Saja!'
+				}).then((result) => {
+				if (result.isConfirmed) {
+					window.location ='login.php';				
+				}
+			})
+		})
+	</script>
 </html>

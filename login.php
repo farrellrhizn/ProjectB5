@@ -6,15 +6,16 @@
     <title>Login || Sembakouu</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
 	<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
+	<script src="dist/sweetalert2.all.min.js"></script>
 </head>
 <body id="bg-login">
     <div class="box-login">
         <h2>Login</h2>
 		<img src="img/Logo500.png">
         <form action="" method="POST">
-			<input type="text" name="user" placeholder="Username" class="input-control">
-			<input type="password" name="pass" placeholder="Password" class="input-control" minlength="4">
-			<input type="submit" name="submit" value="Login" class="btn">
+			<input type="text" name="user" placeholder="Username" id="nama" class="input-control">
+			<input type="password" name="pass" placeholder="Password" id="pass" class="input-control" minlength="4">
+			<input type="submit" name="submit" value="Login" class="btn" id="btn">
 			<a href="https://wa.wizard.id/c5da7d" target="_blank"> <br>Lupa Password! </a>
 		</form>
 		<?php
@@ -34,25 +35,72 @@
 					$_SESSION['status_login'] = true;
 					$_SESSION['user_global'] = $d;
 					$_SESSION['idAdmin'] = $d->idAdmin;
-					echo '<script>alert("Login Berhasil!")</script>';
-					echo '<script>window.location="home.php"</script>';
+					?>
+					<script>
+					Swal.fire({
+						title: 'Login Berhasil!',
+						text: 'Selamat Datang <?php echo $_SESSION['user_global']->NamaAdmin ?>!',
+						icon: 'success'
+					}).then((result) => {
+						window.location="home.php";
+					})
+					</script>
+					<?php
 				}elseif (mysqli_num_rows($cek2) > 0){
 					$d = mysqli_fetch_object($cek);
-					echo '<script>alert("Anda tidak memiliki access, silahkan kembali!")</script>';
-					echo '<script>window.location="login.php"</script>';
+					?>
+					<script>
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'Anda tidak Memiliki Access Login, Silahkan kembali!',
+					  }).then((result) => {
+						window.location="login.php";
+					})
+					</script>
+					<?php
 				}elseif (mysqli_num_rows($cek3) > 0){
 					$d = mysqli_fetch_object($cek);
-					echo '<script>alert("Password anda salah!")</script>';
-					echo '<script>window.location="login.php"</script>';
+					?>
+					<script>
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'Password anda salah!',
+					  }).then((result) => {
+						window.location="login.php";
+					})
+					</script>
+					<?php
 				}elseif (mysqli_num_rows($cek4) > 0){
 					$d = mysqli_fetch_object($cek);
-					echo '<script>alert("Username anda salah!")</script>';
-					echo '<script>window.location="login.php"</script>';
+					?>
+					<script>
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'Username anda salah!',
+					  }).then((result) => {
+						window.location="login.php";
+					})
+					</script>
+					<?php
 				}else{
-					echo '<script>alert("Username atau Password anda salah!")</script>';
+					?>
+					<script>
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'Username dan Password anda salah!',
+					  }).then((result) => {
+						window.location="login.php";
+					})
+					</script>
+					<?php
 				}
 			}
 		?>
 	</div>
 </body>
+
 </html>
